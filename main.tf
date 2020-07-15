@@ -38,7 +38,7 @@ resource "aws_launch_configuration" "example" {
 
   ## this solve zero-downtime problom
   lifecycle {
-    create_before_destory = true
+    create_before_destroy = true
   }
 
 }
