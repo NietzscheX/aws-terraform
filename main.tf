@@ -147,6 +147,7 @@ resource "aws_lb_listener_rule" "asg" {
 output "alb_dns_name" {
   value       = aws_lb.example.dns_name
   description = "the domain name of the load balancer"
+}
 
 
 ## tell ec2 instance to use the security group
