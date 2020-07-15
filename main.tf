@@ -34,7 +34,7 @@ resource "aws_security_group" "instance" {
 variable "server_port" {
   description    = "the port server will use for HTTP requests"
   type           = number
-  defualt        = 8080
+  default        = 8080
 }
 
 output "public_ip" {
