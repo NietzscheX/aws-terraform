@@ -14,7 +14,7 @@ resource "aws_instance" "example" {
   user_data = <<-EOF
     #!/bin/bash
     echo "Hello world" > index.html
-    nohup busybox httpd -f -p 8080 &
+    nohup busybox httpd -f -p ${var.server_port} &
   EOF
 
 }
@@ -24,15 +24,26 @@ resource "aws_security_group" "instance" {
   name = "terraform-example-instance"
 
   ingress{
-    from_port   = 8080
-    to_port     = 8080
+    from_port   = var.server_port
+    to_port     = var.server_port
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
 
+variable "server_port" {
+  description    = "the port server will use for HTTP requests"
+  type           = number
+  defualt        = 8080
+}
+
+output "public_ip" {
+  value        = aws_instance.example.public_ip
+  description  = "The public ip address of web server"
+}
 
 ## tell ec2 instance to use the security group
 ## use terraform expressions
 ## so i need add vpc_security_group_ids to  aws_instance example
-
+## for DRY i need a variable => description type default
+## use it by => var.<variable_name>
