@@ -134,7 +134,7 @@ resource "aws_lb_listener_rule" "asg" {
   listener_arn  = aws_lb_listener.http.arn
   priority      = 100
   condition {
-    field  = "path-pattern"
+    path-pattern {
     values = ["*"]
   }
 
