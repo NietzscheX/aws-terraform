@@ -2,33 +2,11 @@ provider "aws" {
   region = "us-east-2"
 }
 
-/*
-resource "aws_instance" "example" {
-  ami = "ami-0c55b159cbfafe1f0"
-  instance_type = "t2.micro"
-  vpc_security_group_ids = [aws_security_group.instance.id]
-
-  tags = {
-    Name = "terraform-example"
-  }
-
-  user_data = <<-EOF
-    #!/bin/bash
-    echo "Hello world" > index.html
-    nohup busybox httpd -f -p ${var.server_port} &
-  EOF
-
-}
-*/
 
 resource "aws_launch_configuration" "example" {
   image_id = "ami-0c55b159cbfafe1f0"
   instance_type = "t2.micro"
   security_groups = [aws_security_group.instance.id]
-
-  tags = {
-    Name = "terraform-example"
-  }
 
   user_data = <<-EOF
     #!/bin/bash
@@ -61,10 +39,7 @@ variable "server_port" {
   default        = 8080
 }
 
-output "public_ip" {
-  value        = aws_instance.example.public_ip
-  description  = "The public ip address of web server"
-}
+
 
 # datasource
 # data.<provider>_<type>.<name>.<attribute>
@@ -72,22 +47,23 @@ data "aws_vpc" "default" {
   default = true
 }
 
-data "aws_subnet_ids" "default" [
+data "aws_subnet_ids" "default" {
   vpc_id = data.aws_vpc.default.id
 }
 
 ##ASG
 resource "aws_autoscaling_group" "example" {
-  launch_configuation = aws_launch_configuration.example.name
+  launch_configuration = aws_launch_configuration.example.name
   min_size = 2
   max_size = 10
 
-  vpc_zone_identifier = data.aws_subnet.ids.default.ids
+  vpc_zone_identifier = data.aws_subnet_ids.default.ids
 
   tag{
     key 		= "Name"
     value     		= "terraform-asg-example"
     propagate_at_launch = true
+  }
 }
 
 ## tell ec2 instance to use the security group
